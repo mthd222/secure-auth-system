@@ -1,19 +1,70 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Secure Login System</title>
+
+    <title>Secure Login</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static',
+          filename='css/style.css') }}">
+
 </head>
+
 <body>
 
-    <h1>Login Page</h1>
+<div class="container">
 
-    <form>
-        <input type="email" placeholder="Email"><br><br>
+    <div class="logo">
+        🔐
+    </div>
 
-        <input type="password" placeholder="Password"><br><br>
+    <h1>Secure Login</h1>
 
-        <button type="submit">Login</button>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form action="/login" method="POST">
+
+        <input type="email"
+               name="email"
+               placeholder="Enter Email"
+               required>
+
+        <input type="password"
+               id="password"
+               name="password"
+               placeholder="Enter Password"
+               required>
+
+        <input type="checkbox"
+               onclick="togglePassword('password')">
+        Show Password
+
+        <button type="submit">
+            Login
+        </button>
+
     </form>
+
+    <a href="/register">
+        Create New Account
+    </a>
+
+    <div class="footer">
+        Secure Authentication System
+    </div>
+
+</div>
+
+<script src="{{ url_for('static',
+filename='js/script.js') }}"></script>
 
 </body>
 </html>
