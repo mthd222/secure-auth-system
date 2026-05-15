@@ -1,15 +1,24 @@
 from flask import Flask, render_template, request, redirect, session, flash
 import sqlite3
+import os
 
+from dotenv import load_dotenv
 from security.hashing import hash_password, verify_password
 from security.validators import validate_password
 from flask_wtf.csrf import CSRFProtect
 from datetime import timedelta
 
 app = Flask(__name__)
+
+load_dotenv()
+
 csrf = CSRFProtect(app)
 
-app.secret_key = "supersecretkey"
+app.secret_key = os.getenv(
+    "SECRET_KEY",
+    "fallback_secret_key"
+)
+
 app.permanent_session_lifetime = timedelta(minutes=10)
 
 DATABASE = "database.db"
@@ -63,6 +72,9 @@ def register():
             return redirect('/')
 
         except sqlite3.IntegrityError:
+
+            conn.close()
+
             flash("Email already exists")
             return redirect('/register')
 
@@ -70,10 +82,17 @@ def register():
 
 # ---------------- LOGIN ----------------
 
+
 @app.route('/login', methods=['POST'])
 def login():
 
     email = request.form['email']
+    password = request.form['password']
+
+    ip = request.remote_addr
+
+    # ---------------- CHECK BRUTE FORCE LIMIT ----------------
+
     conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
 
@@ -85,12 +104,16 @@ def login():
     record = cursor.fetchone()
 
     if record and record[0] >= 5:
-        flash("Account temporarily locked due to multiple failed attempts")
-        return redirect('/')
-    password = request.form['password']
 
-    conn = sqlite3.connect(DATABASE)
-    cursor = conn.cursor()
+        conn.close()
+
+        flash(
+            "Account temporarily locked due to multiple failed attempts"
+        )
+
+        return redirect('/')
+
+    # ---------------- CHECK USER ----------------
 
     cursor.execute(
         "SELECT * FROM users WHERE email=?",
@@ -99,9 +122,7 @@ def login():
 
     user = cursor.fetchone()
 
-    conn.close()
-
-    ip = request.remote_addr
+    # ---------------- VERIFY PASSWORD ----------------
 
     if user:
 
@@ -109,46 +130,46 @@ def login():
 
         if verify_password(stored_password, password):
 
+            # Create secure session
             session.permanent = True
             session['user'] = user[1]
-            conn = sqlite3.connect(DATABASE)
-            cursor = conn.cursor()
 
+            # Log successful login
             cursor.execute(
                 '''
-                INSERT INTO login_logs (email, status, ip_address)
+                INSERT INTO login_logs
+                (email, status, ip_address)
                 VALUES (?, ?, ?)
                 ''',
                 (email, "SUCCESS", ip)
             )
 
-            conn.commit()
-            conn.close()
-
+            # Reset failed attempts
             cursor.execute(
                 "DELETE FROM failed_attempts WHERE email=?",
                 (email,)
             )
 
             conn.commit()
+            conn.close()
+
             flash("Login Successful")
 
             return redirect('/dashboard')
 
-    conn = sqlite3.connect(DATABASE)
-    cursor = conn.cursor()
+    # ---------------- FAILED LOGIN ----------------
 
+    # Log failed login
     cursor.execute(
         '''
-        INSERT INTO login_logs (email, status, ip_address)
+        INSERT INTO login_logs
+        (email, status, ip_address)
         VALUES (?, ?, ?)
         ''',
         (email, "FAILED", ip)
     )
 
-    conn.commit()
-    conn.close()
-
+    # Check existing failed attempts
     cursor.execute(
         "SELECT * FROM failed_attempts WHERE email=?",
         (email,)
@@ -171,13 +192,16 @@ def login():
 
         cursor.execute(
             '''
-            INSERT INTO failed_attempts (email, attempts)
+            INSERT INTO failed_attempts
+            (email, attempts)
             VALUES (?, ?)
             ''',
             (email, 1)
         )
 
     conn.commit()
+    conn.close()
+
     flash("Invalid Email or Password")
 
     return redirect('/')
