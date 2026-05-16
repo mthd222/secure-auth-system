@@ -318,7 +318,7 @@ Future improvements may include:
 
 # 👨‍💻 Author
 
-## Milan
+## Milan Tej H D
 Cyber Security Intern
 
 ---
