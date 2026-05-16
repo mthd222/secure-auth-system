@@ -144,3 +144,27 @@ a:hover{
         transform:translateY(0);
     }
 }
+
+
+.password-container{
+    position:relative;
+}
+
+.password-container input{
+    width:100%;
+    padding-right:45px;
+}
+
+.password-container i{
+    position:absolute;
+    top:50%;
+    right:15px;
+    transform:translateY(-50%);
+    cursor:pointer;
+    color:#cbd5e1;
+    font-size:18px;
+}
+
+.password-container i:hover{
+    color:white;
+}

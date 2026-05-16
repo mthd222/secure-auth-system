@@ -27,7 +27,8 @@ cursor.execute('''
 CREATE TABLE IF NOT EXISTS failed_attempts (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     email TEXT,
-    attempts INTEGER DEFAULT 0
+    attempts INTEGER DEFAULT 0,
+    last_attempt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )
 ''')
 
