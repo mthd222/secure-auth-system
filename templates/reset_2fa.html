@@ -2,7 +2,7 @@
 <html>
 <head>
 
-    <title>Secure Login</title>
+    <title>Reset 2FA</title>
 
     <link rel="stylesheet"
           href="{{ url_for('static',
@@ -14,9 +14,9 @@
 
 <div class="container">
 
-    <div class="logo">Secure</div>
+    <div class="logo">2FA</div>
 
-    <h1>Secure Login</h1>
+    <h1>Reset 2FA</h1>
 
     {% with messages = get_flashed_messages() %}
         {% if messages %}
@@ -28,7 +28,7 @@
         {% endif %}
     {% endwith %}
 
-    <form action="/login" method="POST">
+    <form action="/reset-2fa" method="POST">
         <input type="hidden"
                name="csrf_token"
                value="{{ csrf_token() }}">
@@ -40,38 +40,29 @@
 
         <div class="password-container">
             <input type="password"
-                   id="password"
+                   id="reset2fapassword"
                    name="password"
                    placeholder="Enter Password"
                    required>
 
             <button type="button"
                     class="password-toggle"
-                    data-target="password">
+                    data-target="reset2fapassword">
                 Show
             </button>
         </div>
 
         <button type="submit">
-            Login
+            Generate New 2FA Key
         </button>
-
     </form>
 
-    <a href="/register">
-        Create New Account
-    </a>
-
-    <a href="/forgot-password">
-        Forgot Password?
-    </a>
-
-    <a href="/reset-2fa">
-        Reset 2FA
+    <a href="/">
+        Back to Login
     </a>
 
     <div class="footer">
-        Secure Authentication System
+        This requires your account password
     </div>
 
 </div>

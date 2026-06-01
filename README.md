@@ -1,188 +1,146 @@
-# 🔐 Secure Login and Authentication System
+# Secure Login and Authentication System
 
-A secure authentication system developed using Flask and SQLite that implements modern cybersecurity mechanisms including password hashing, session management, brute-force protection, CSRF protection, login logging, secure cookie handling, and input validation.
+A Flask and SQLite authentication system built for a cybersecurity internship project. The application demonstrates password hashing, CSRF protection, SQL injection prevention, brute-force lockout, secure session handling, password reset, OTP verification, two-factor authentication, security headers, and login activity logging.
 
 ---
 
-# 📌 Project Overview
+## Project Overview
 
-This project focuses on designing and implementing a secure login and authentication system that protects user accounts and sensitive data from unauthorized access.
+The goal of this project is to protect user accounts from common web authentication attacks while keeping the implementation simple enough to study and test.
 
-The application demonstrates practical cybersecurity concepts such as:
+Implemented cybersecurity concepts:
 
-- Secure user authentication
-- Password hashing
-- Session security
-- SQL Injection prevention
-- CSRF protection
-- Brute-force attack mitigation
-- Secure cookie configuration
+- Secure user registration and login
+- Password hashing with Werkzeug
+- CSRF protection with Flask-WTF
+- Parameterized SQLite queries
+- Account lockout after repeated failed logins
+- Secure session timeout
+- OTP verification after password authentication
+- Google Authenticator-compatible TOTP support
+- Password reset with password policy enforcement
 - Login activity logging
-
-The project was developed as part of a cybersecurity internship assignment.
-
----
-
-# 🚀 Features
-
-## ✅ Authentication Features
-
-- User Registration
-- Secure Login
-- Secure Logout
-- Session Management
-- Session Timeout
+- Security response headers
+- Session hijacking mitigation documentation
 
 ---
 
-## ✅ Security Features
+## Features
 
-- Password Hashing using Werkzeug
-- SQL Injection Prevention
-- CSRF Protection
-- Brute Force Protection
-- Login Attempt Tracking
-- Temporary Account Lock
-- Secure Cookie Configuration
-- Input Validation
-- Input Sanitization
-- Email Validation
-- Login Logging
+### Authentication
+
+- User registration
+- Login with password plus OTP
+- Secure logout through POST and CSRF protection
+- Session timeout after 10 minutes
+- Forgot password and reset password flow
+- Password-protected 2FA reset flow
+
+### Security
+
+- Password hashing
+- Strong password validation
+- Email validation
+- SQL injection prevention
+- CSRF protection
+- Brute-force attempt tracking
+- Temporary account lock after 5 failed attempts
+- Demo email OTP for academic testing
+- Google Authenticator-compatible TOTP
+- HTTPOnly and SameSite session cookies
+- Security headers:
+  - X-Frame-Options
+  - X-Content-Type-Options
+  - Referrer-Policy
+  - Content-Security-Policy
 
 ---
 
-## ✅ UI Features
-
-- Responsive Authentication Pages
-- Modern Glassmorphism UI
-- Password Visibility Toggle
-- Smooth Animations
-- User-Friendly Interface
-
----
-
-# 🛠 Technologies Used
+## Technologies Used
 
 | Technology | Purpose |
 |---|---|
-| Python | Backend Development |
-| Flask | Web Framework |
-| SQLite | Database |
-| HTML5 | Frontend Structure |
+| Python | Backend development |
+| Flask | Web framework |
+| SQLite | Local database |
+| HTML5 | Page structure |
 | CSS3 | Styling |
-| JavaScript | Frontend Logic |
-| Flask-WTF | CSRF Protection |
-| Werkzeug | Password Hashing |
-| python-dotenv | Environment Variable Management |
-| GitHub | Version Control |
+| JavaScript | Password visibility toggle |
+| Flask-WTF | CSRF protection |
+| Werkzeug | Password hashing |
+| python-dotenv | Environment variables |
 
 ---
 
-# 📂 Project Structure
+## Project Structure
 
 ```text
 secure-auth-system/
-│
-├── app.py
-├── requirements.txt
-├── .env
-├── database.db
-│
-├── templates/
-│   ├── login.html
-│   ├── register.html
-│   └── dashboard.html
-│
-├── static/
-│   ├── css/
-│   │   └── style.css
-│   └── js/
-│       └── script.js
-│
-├── security/
-│   ├── hashing.py
-│   └── validators.py
-│
-├── database/
-│   └── db_setup.py
-│
-├── docs/
-├── images/
-└── README.md
+|-- app.py
+|-- requirements.txt
+|-- README.md
+|-- database.db
+|-- database/
+|   |-- db_setup.py
+|-- docs/
+|   |-- security_testing.md
+|-- security/
+|   |-- hashing.py
+|   |-- totp.py
+|   |-- validators.py
+|-- static/
+|   |-- css/
+|   |   |-- style.css
+|   |-- js/
+|       |-- script.js
+|-- templates/
+|   |-- dashboard.html
+|   |-- forgot_password.html
+|   |-- login.html
+|   |-- register.html
+|   |-- reset_password.html
+|   |-- reset_2fa.html
+|   |-- setup_2fa.html
+|   |-- verify_otp.html
 ```
 
 ---
 
-# ⚙️ Installation Guide
+## Installation
 
-## Step 1 — Clone Repository
-
-```bash
-git clone https://github.com/mthd222/secure-auth-system.git
-cd secure-auth-system
-```
-
----
-
-## Step 2 — Create Virtual Environment
-
-### Windows
+Create and activate a virtual environment:
 
 ```bash
 python -m venv venv
 venv\Scripts\activate
 ```
 
-### Linux / Kali / Ubuntu
-
-```bash
-python3 -m venv venv
-source venv/bin/activate
-```
-
----
-
-## Step 3 — Install Dependencies
+Install dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
----
-
-# 🔑 Environment Variables
-
-Create a `.env` file in the project root directory.
+Create `.env` in the project root:
 
 ```env
-SECRET_KEY=MyVeryStrongSecretKey123
+SECRET_KEY=replace-with-a-strong-random-secret
+FLASK_DEBUG=0
 ```
 
----
-
-# 🗄 Database Setup
-
-Run the following command:
+Set up the database:
 
 ```bash
 python database/db_setup.py
 ```
 
-This creates:
-
-- users table
-- login_logs table
-- failed_attempts table
-
----
-
-# ▶️ Run Application
+Run the application:
 
 ```bash
 python app.py
 ```
 
-Open browser:
+Open:
 
 ```text
 http://127.0.0.1:5000
@@ -190,139 +148,105 @@ http://127.0.0.1:5000
 
 ---
 
-# 🔐 Security Mechanisms Implemented
+## Phase 2 Security Modules
 
-## Password Hashing
+### Password Reset
 
-Passwords are securely hashed using Werkzeug security utilities.
+Flow:
 
-Benefits:
-- Prevents plain-text password storage
-- Protects credentials during database compromise
-
----
-
-## SQL Injection Prevention
-
-Parameterized queries are used throughout the application.
-
-Example:
-
-```python
-cursor.execute(
-    "SELECT * FROM users WHERE email=?",
-    (email,)
-)
+```text
+Forgot Password -> Enter Email -> Verify Account Exists -> Set New Password -> Hash Password -> Update Database
 ```
 
----
+Pages:
 
-## CSRF Protection
+- `forgot_password.html`
+- `reset_password.html`
 
-CSRF protection is implemented using Flask-WTF.
+### OTP Verification and 2FA
 
-Benefits:
-- Prevents forged requests
-- Secures form submissions
+Login now requires two steps:
 
----
+```text
+Email + Password -> OTP Challenge -> Session Creation -> Dashboard
+```
 
-## Brute Force Protection
+The OTP page supports:
 
-The system:
-- Tracks failed login attempts
-- Locks account after 5 failed attempts
-- Automatically unlocks after 15 minutes
+- Demo email OTP printed in the Flask terminal for academic testing
+- Google Authenticator-compatible TOTP using the displayed setup key or setup URI
+- A dedicated 2FA setup page after registration
+- A password-protected 2FA reset page if the authenticator app has an old key
 
----
+### Session Hijacking Mitigations
 
-## Session Security
+Implemented mitigations:
 
-Implemented controls:
-- Session timeout
-- Secure cookies
-- HTTPONLY cookies
-- SAMESITE cookie policy
+- `SESSION_COOKIE_HTTPONLY`
+- `SESSION_COOKIE_SAMESITE='Lax'`
+- 10-minute session timeout
+- CSRF-protected logout
+- Session is created only after OTP verification
 
----
-
-# 🧪 Testing Performed
-
-| Test Case | Result |
-|---|---|
-| Valid Registration | ✅ PASS |
-| Duplicate Email | ✅ PASS |
-| Weak Password | ✅ PASS |
-| Valid Login | ✅ PASS |
-| Invalid Login | ✅ PASS |
-| Logout | ✅ PASS |
-| SQL Injection Test | ✅ BLOCKED |
-| Brute Force Test | ✅ BLOCKED |
-| Session Timeout | ✅ PASS |
-| Password Hashing Verification | ✅ PASS |
+More detail is documented in [docs/security_testing.md](docs/security_testing.md).
 
 ---
 
-# 📸 Screenshots
+## Security Testing Checklist
 
-Insert screenshots inside the `images/` folder.
+| Test Case | Input | Expected Result |
+|---|---|---|
+| SQL injection | `' OR '1'='1` | Login blocked |
+| Weak password | `123`, `password`, `admin` | Validation failed |
+| Brute force | 5 wrong passwords | Account locked |
+| Password reset | Valid registered email | New password stored as hash |
+| OTP verification | Wrong OTP | Dashboard blocked |
+| OTP verification | Correct demo OTP or TOTP | Dashboard allowed |
+| Session timeout | Wait 10 minutes | Session expires |
+| ZAP scan | `http://127.0.0.1:5000` | Findings documented |
 
 Recommended screenshots:
 
-- Login Page
-- Registration Page
+- Login page
+- Registration page
+- Forgot password page
+- Reset password page
+- OTP verification page
 - Dashboard
-- Database Tables
-- Hashed Passwords
-- Brute Force Protection
-- Login Logs
-- Session Timeout
-- Project Structure
-- Architecture Diagram
+- SQL injection blocked
+- Weak password blocked
+- Brute-force account lock
+- Login logs table
+- ZAP scan results
 
 ---
 
-# 🔮 Future Enhancements
+## OWASP ZAP Testing
 
-Future improvements may include:
+Target:
 
-- Two-Factor Authentication (2FA)
-- Email Verification
-- JWT Authentication
-- OAuth Login
-- CAPTCHA Integration
-- Password Reset System
-- Docker Deployment
-- MySQL/PostgreSQL Integration
+```text
+http://127.0.0.1:5000
+```
 
----
+Run:
 
-# 📚 References
+- Spider scan
+- Passive scan
+- Active scan
 
-- Flask Documentation  
-  https://flask.palletsprojects.com/
-
-- OWASP Authentication Cheat Sheet  
-  https://owasp.org/www-project-authentication-cheat-sheet/
-
-- SQLite Documentation  
-  https://www.sqlite.org/docs.html
-
-- Werkzeug Security Documentation  
-  https://werkzeug.palletsprojects.com/
-
-- Python Documentation  
-  https://docs.python.org/3/
+Expected findings and notes are documented in [docs/security_testing.md](docs/security_testing.md).
 
 ---
 
-# 👨‍💻 Author
+## Author
 
-## Milan Tej H D
+Milan Tej H D
+
 Cyber Security Intern
 
 ---
 
-# 📄 License
+## License
 
 This project is developed for educational and cybersecurity learning purposes.

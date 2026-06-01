@@ -17,11 +17,13 @@ body{
         #1e293b,
         #334155
     );
-    overflow:hidden;
+    overflow:auto;
+    padding:24px;
 }
 
 .container{
     width:420px;
+    max-width:100%;
     background:rgba(255,255,255,0.1);
     backdrop-filter:blur(12px);
     border:1px solid rgba(255,255,255,0.2);
@@ -152,19 +154,66 @@ a:hover{
 
 .password-container input{
     width:100%;
-    padding-right:45px;
+    padding-right:78px;
 }
 
-.password-container i{
+.password-toggle{
     position:absolute;
     top:50%;
-    right:15px;
+    right:10px;
     transform:translateY(-50%);
+    width:auto;
+    min-width:54px;
+    padding:8px 10px;
+    margin:0;
+    border-radius:8px;
+    background:#0f172a;
     cursor:pointer;
-    color:#cbd5e1;
-    font-size:18px;
+    color:#f8fafc;
+    font-size:13px;
 }
 
-.password-container i:hover{
-    color:white;
+.password-toggle:hover{
+    background:#1e293b;
+    transform:translateY(-50%);
+}
+
+.otp-details{
+    margin-bottom:16px;
+    color:#e2e8f0;
+    font-size:13px;
+    line-height:1.5;
+}
+
+.otp-details code{
+    display:block;
+    margin:6px 0 12px;
+    padding:10px;
+    background:rgba(15,23,42,0.65);
+    border-radius:8px;
+    color:#f8fafc;
+    overflow-wrap:anywhere;
+}
+
+.qr-panel{
+    display:flex;
+    justify-content:center;
+    margin:0 0 18px;
+}
+
+.qr-panel img{
+    width:220px;
+    height:220px;
+    padding:10px;
+    background:#ffffff;
+    border-radius:8px;
+}
+
+.dashboard form{
+    margin-top:25px;
+}
+
+.logout-btn{
+    width:auto;
+    min-width:120px;
 }

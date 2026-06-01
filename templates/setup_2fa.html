@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>Set Up 2FA</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static',
+          filename='css/style.css') }}">
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="logo">2FA</div>
+
+    <h1>Set Up 2FA</h1>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="qr-panel">
+        <img src="{{ qr_code }}"
+             alt="Google Authenticator QR code">
+    </div>
+
+    <div class="otp-details">
+        <p>Account:</p>
+        <code>{{ email }}</code>
+
+        <p>Google Authenticator setup key:</p>
+        <code>{{ otp_secret }}</code>
+
+        <p>Manual setup URI:</p>
+        <code>{{ provisioning_uri }}</code>
+    </div>
+
+    <form action="/setup-2fa" method="POST">
+        <input type="hidden"
+               name="csrf_token"
+               value="{{ csrf_token() }}">
+
+        <input type="text"
+               name="otp"
+               placeholder="Enter Google Authenticator Code"
+               minlength="6"
+               maxlength="6"
+               inputmode="numeric"
+               required>
+
+        <button type="submit">
+            Verify 2FA Setup
+        </button>
+    </form>
+
+    <div class="footer">
+        Delete old entries, scan this QR, then verify the new code
+    </div>
+
+</div>
+
+</body>
+</html>

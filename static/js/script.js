@@ -1,24 +1,19 @@
-function togglePassword(passwordId, iconId){
+document.querySelectorAll(".password-toggle").forEach((button) => {
+    button.addEventListener("click", () => {
+        const targetId = button.dataset.target;
+        const passwordField = document.getElementById(targetId);
 
-    let passwordField =
-        document.getElementById(passwordId);
+        if (!passwordField) {
+            return;
+        }
 
-    let icon =
-        document.getElementById(iconId);
-
-    if(passwordField.type === "password"){
-
-        passwordField.type = "text";
-
-        icon.classList.remove("fa-eye");
-        icon.classList.add("fa-eye-slash");
-    }
-
-    else{
+        if (passwordField.type === "password") {
+            passwordField.type = "text";
+            button.textContent = "Hide";
+            return;
+        }
 
         passwordField.type = "password";
-
-        icon.classList.remove("fa-eye-slash");
-        icon.classList.add("fa-eye");
-    }
-}
+        button.textContent = "Show";
+    });
+});

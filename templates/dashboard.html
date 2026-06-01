@@ -14,9 +14,7 @@
 
 <div class="container dashboard">
 
-    <div class="logo">
-        ✅
-    </div>
+    <div class="logo">OK</div>
 
     <h1>Welcome {{ username }}</h1>
 
@@ -24,12 +22,17 @@
         Authentication Successful
     </p>
 
-    <a href="/logout"
-       class="logout-btn">
+    <form action="/logout"
+          method="POST">
+        <input type="hidden"
+               name="csrf_token"
+               value="{{ csrf_token() }}">
 
-        Logout
-
-    </a>
+        <button type="submit"
+                class="logout-btn">
+            Logout
+        </button>
+    </form>
 
     <div class="footer">
         Protected Session Active

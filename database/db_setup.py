@@ -9,7 +9,8 @@ CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT NOT NULL,
     email TEXT UNIQUE NOT NULL,
-    password_hash TEXT NOT NULL
+    password_hash TEXT NOT NULL,
+    otp_secret TEXT
 )
 ''')
 
@@ -33,6 +34,14 @@ CREATE TABLE IF NOT EXISTS failed_attempts (
 ''')
 
 conn.commit()
+
+cursor.execute("PRAGMA table_info(users)")
+columns = [column[1] for column in cursor.fetchall()]
+
+if 'otp_secret' not in columns:
+    cursor.execute("ALTER TABLE users ADD COLUMN otp_secret TEXT")
+    conn.commit()
+
 conn.close()
 
 print("Database Created Successfully")
