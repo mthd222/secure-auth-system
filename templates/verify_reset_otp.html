@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>Verify OTP</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static',
+          filename='css/style.css') }}">
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="logo">OTP</div>
+
+    <h1>Two-Factor Verification (Password Reset)</h1>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form action="/verify-reset-otp" method="POST">
+        <input type="hidden"
+               name="csrf_token"
+               value="{{ csrf_token() }}">
+
+        <input type="text"
+               name="otp"
+               placeholder="Enter OTP Code"
+               minlength="6"
+               maxlength="6"
+               inputmode="numeric"
+               required>
+
+        <button type="submit">
+            Verify OTP
+        </button>
+    </form>
+
+    <div class="footer">
+        Use your Google Authenticator code or the OTP printed in the Flask terminal
+    </div>
+
+</div>
+
+</body>
+</html>

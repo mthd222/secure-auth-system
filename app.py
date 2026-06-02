@@ -516,6 +516,53 @@ def verify_otp():
     )
 
 
+@app.route('/verify-reset-otp', methods=['GET', 'POST'])
+def verify_reset_otp():
+
+    if 'reset_pending_email' not in session:
+        return redirect('/forgot-password')
+
+    email = session['reset_pending_email']
+    otp_secret = session.get('reset_pending_otp_secret')
+    provisioning_uri = None
+
+    if otp_secret:
+        provisioning_uri = get_totp_uri(email, otp_secret)
+
+    if request.method == 'POST':
+
+        otp_code = normalize_otp_code(request.form['otp'])
+        email_otp = session.get('reset_email_otp')
+        created_at = session.get('reset_email_otp_created_at')
+        email_otp_valid = False
+
+        if email_otp and created_at:
+            otp_age = datetime.now() - datetime.fromisoformat(created_at)
+            email_otp_valid = (
+                otp_age.total_seconds() <= 300 and
+                secrets.compare_digest(email_otp, otp_code)
+            )
+
+        if email_otp_valid or (otp_secret and verify_totp(otp_secret, otp_code)):
+            # Mark the reset as verified and allow password change
+            session.pop('reset_email_otp', None)
+            session.pop('reset_email_otp_created_at', None)
+            session['reset_email'] = session.pop('reset_pending_email')
+            session.pop('reset_pending_otp_secret', None)
+
+            flash("OTP verified. Set a new password.")
+            return redirect('/reset-password')
+
+        flash("Invalid or expired OTP")
+        return redirect('/verify-reset-otp')
+
+    return render_template(
+        'verify_reset_otp.html',
+        otp_secret=otp_secret,
+        provisioning_uri=provisioning_uri
+    )
+
+
 # ---------------- RESET 2FA ----------------
 
 @app.route('/reset-2fa', methods=['GET', 'POST'])
@@ -594,19 +641,32 @@ def forgot_password():
 
         cursor.execute(
             '''
-            SELECT email FROM users
+            SELECT email, otp_secret FROM users
             WHERE email=?
             ''',
             (email,)
         )
 
         user = cursor.fetchone()
-        conn.close()
 
         if user:
-            session['reset_email'] = email
-            flash("Account verified. Set a new password.")
-            return redirect('/reset-password')
+            # Prepare OTP for reset: allow either email OTP (demo) or TOTP if configured
+            email_otp = f"{secrets.randbelow(1000000):06d}"
+            otp_secret = user[1]
+
+            session.clear()
+            session['reset_pending_email'] = email
+            session['reset_pending_otp_secret'] = otp_secret
+            session['reset_email_otp'] = email_otp
+            session['reset_email_otp_created_at'] = datetime.now().isoformat()
+
+            conn.close()
+
+            flash("Account verified. Enter OTP to continue password reset.")
+            print(f"Demo password-reset email OTP for {email}: {email_otp}", flush=True)
+            return redirect('/verify-reset-otp')
+
+        conn.close()
 
         flash("No account found for that email")
         return redirect('/forgot-password')
